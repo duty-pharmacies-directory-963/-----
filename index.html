@@ -133,7 +133,7 @@
 
                 <button id="open-fb-modal-btn" class="bg-white hover:bg-slate-100 text-slate-900 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black shadow-lg hover:shadow-xl transition-all flex items-center gap-2 border border-slate-200">
                     <i class="fa-brands fa-facebook-f text-blue-600 text-base"></i>
-                    <span class="hidden md:inline">استخراج صورة للنشر</span>
+                    <span class="hidden md:inline">استخرج صورة للنشر</span>
                     <span class="md:hidden">صورة الفيس بوك</span>
                 </button>
 
@@ -223,6 +223,7 @@
 
     </main>
 
+    <!-- Auth Modal -->
     <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 hidden">
         <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 relative">
             <button id="close-auth-modal-btn" class="absolute top-4 left-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2">
@@ -332,8 +333,8 @@
                                 <input type="date" id="new-date-input" required class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">اسم اليوم (يتحدد تلقائياً):</label>
-                                <input type="text" id="new-dayname-input" placeholder="مثال: السبت" required class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold">
+                                <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">اسم اليوم:</label>
+                                <input type="text" id="new-dayname-input" placeholder="مثال: الجمعة" required class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold">
                             </div>
                             <div class="flex items-end">
                                 <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5">
@@ -356,7 +357,7 @@
                 <!-- TAB 2: PHARMACY DIRECTORY -->
                 <div id="tab-directory" class="space-y-6 hidden">
                     <div class="bg-slate-50 dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                        <h4 class="text-sm font-black text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
+                        <h4 id="dir-form-title" class="text-sm font-black text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
                             <i class="fa-solid fa-house-medical-medical text-emerald-600 dark:text-emerald-400"></i>
                             إضافة صيدلية جديدة إلى الدليل العام
                         </h4>
@@ -387,9 +388,12 @@
                                 <input type="url" id="dir-map-input" placeholder="https://maps.app.goo.gl/..." class="w-full px-3.5 py-2.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-xs sm:text-sm font-medium dir-ltr text-right">
                             </div>
 
-                            <div class="flex justify-end">
-                                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition-all flex items-center gap-2 shadow-md shadow-emerald-600/20">
-                                    <i class="fa-solid fa-plus"></i> حفظ الصيدلية بالدليل
+                            <div class="flex items-center justify-end gap-3">
+                                <button type="button" id="cancel-edit-dir-btn" class="hidden bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold px-4 py-2.5 rounded-xl text-xs hover:bg-slate-300 transition-all">
+                                    إلغاء التعديل
+                                </button>
+                                <button type="submit" id="save-dir-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition-all flex items-center gap-2 shadow-md shadow-emerald-600/20">
+                                    <i class="fa-solid fa-plus"></i> <span id="save-dir-btn-text">حفظ الصيدلية بالدليل</span>
                                 </button>
                             </div>
                         </form>
@@ -440,7 +444,7 @@
                                     <i class="fa-solid fa-file-image"></i>
                                 </div>
                                 <div>
-                                    <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400">استخراج صور الفيسبوك</div>
+                                    <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400">استخرج صور الفيسبوك</div>
                                     <div id="stat-image-exports" class="text-2xl font-black text-slate-900 dark:text-slate-100 mt-0.5">0</div>
                                 </div>
                             </div>
@@ -517,6 +521,7 @@
         </div>
     </div>
 
+    <!-- Facebook Modal Export -->
     <div id="facebook-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 hidden transition-opacity duration-300">
         <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col max-h-[92vh] overflow-hidden">
             
@@ -546,12 +551,11 @@
                 </div>
             </div>
 
-            <!-- FB Card Export Area (1080x1080 Canvas) - Redesigned professionally with enhanced aesthetic depth -->
+            <!-- FB Card Export Area (1080x1080 Canvas) -->
             <div class="flex-grow flex items-center justify-center overflow-auto p-2 bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800">
                 <div class="fb-preview-wrapper" id="fb-wrapper">
                     <div id="facebook-export-card" class="bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 text-white p-10 flex flex-col justify-between transition-colors duration-300 border-4 border-emerald-500/30 shadow-2xl relative overflow-hidden">
                         
-                        <!-- Background decorative glow elements for premium look -->
                         <div class="absolute -top-32 -right-32 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none"></div>
                         <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-teal-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -662,7 +666,6 @@
         const settingsRef = ref(db, 'settings');
         const analyticsRef = ref(db, 'analytics');
 
-        // Helper to get today formatted date
         function getTodayFormattedDate() {
             const d = new Date();
             const year = d.getFullYear();
@@ -682,51 +685,6 @@
                 ]
             },
             {
-                date: "2026-09-13",
-                dayName: "الأحد",
-                shiftTime: "من الساعة 8:00 مساءً لغاية الساعة 12:00 ليلاً",
-                pharmacies: [
-                    { name: "صيدلية ديما", region: "وادي الشاطر", address: "وادي الشاطر - شرق جامع أرواد ومطعم الناعورة بـ 300 متر جانب عيادة الدكتور رباح سلوم", mapUrl: "https://maps.app.goo.gl/mjdacrapbkGCV59j9" },
-                    { name: "صيدلية الغوى", region: "الرادار", address: "الرادار - جنوب الباب الشرقي للمدرسة - النسق الثاني عن الشارع الرئيسي", mapUrl: "" }
-                ]
-            },
-            {
-                date: "2026-09-14",
-                dayName: "الإثنين",
-                shiftTime: "من الساعة 8:00 مساءً لغاية الساعة 12:00 ليلاً",
-                pharmacies: [
-                    { name: "صيدلية الصبا", region: "الرادار", address: "الرادار - شمال غرب النقطة العسكرية السابقة بـ 50 متر - نسق ثاني عن الشارع الرئيسي غرباً", mapUrl: "" },
-                    { name: "صيدلية الشفاء", region: "وادي الشاطر", address: "طريق عام طرطوس الرادار الشارع الرئيسي مفرق وادي الشاطر جانب أفران الحموي", mapUrl: "" }
-                ]
-            },
-            {
-                date: "2026-09-15",
-                dayName: "الثلاثاء",
-                shiftTime: "من الساعة 8:00 مساءً لغاية الساعة 12:00 ليلاً",
-                pharmacies: [
-                    { name: "صيدلية نور", region: "الرادار", address: "الرادار - جانب مستوصف مقابل مدرسة الرادار", mapUrl: "" },
-                    { name: "صيدلية الربيع", region: "وادي الشاطر", address: "وادي الشاطر - شرق مدرسة وادي الشاطر", mapUrl: "" }
-                ]
-            },
-            {
-                date: "2026-09-16",
-                dayName: "الأربعاء",
-                shiftTime: "من الساعة 8:00 مساءً لغاية الساعة 12:00 ليلاً",
-                pharmacies: [
-                    { name: "صيدلية الورد", region: "وادي الشاطر", address: "وادي الشاطر - شمال شرق مدرسة وادي الشاطر جانب محل علي احمد", mapUrl: "" },
-                    { name: "صيدلية محمد", region: "الرادار", address: "الرادار - شمال المستوصف بـ 200 متر جانب مركز عطر الورد", mapUrl: "" }
-                ]
-            },
-            {
-                date: "2026-09-17",
-                dayName: "الخميس",
-                shiftTime: "من الساعة 8:00 مساءً لغاية الساعة 12:00 ليلاً",
-                pharmacies: [
-                    { name: "صيدلية هبه", region: "الرادار", address: "الرادار - أول شارع الرادار", mapUrl: "" },
-                    { name: "صيدلية العمار", region: "رأس الشغري", address: "رأس الشغري - خط السرفيس جانب مغسلة الوسيم مقابل سوبر ماركت الحبيب", mapUrl: "" }
-                ]
-            },
-            {
                 date: "2026-09-18",
                 dayName: "الجمعة",
                 shiftTime: "فترتين: (8:00 صباحاً - 4:00 عصراً) | (4:00 عصراً - 12:00 ليلاً)",
@@ -736,71 +694,6 @@
                     { name: "صيدلية سمارة", region: "وادي الشاطر", address: "وادي الشاطر - غرب سكة القطار شمال الهيثم للتجارة بـ 50 متر", shiftPeriod: "من الساعة 4:00 مساءً لغاية الساعة 12:00 ليلاً", mapUrl: "" },
                     { name: "صيدلية ياره", region: "الرادار", address: "الرادار - غرب النقطة العسكرية القديمة بـ 70 متر جانب المؤسسة القديمة", shiftPeriod: "من الساعة 4:00 مساءً لغاية الساعة 12:00 ليلاً", mapUrl: "" }
                 ]
-            },
-            {
-                date: "2026-09-19",
-                dayName: "السبت",
-                shiftTime: "من الساعة 8:00 مساءً لغاية الساعة 12:00 ليلاً",
-                pharmacies: [
-                    { name: "صيدلية سراء خضور", region: "الرادار", address: "الرادار - شرق دوار رأس الشغري خط السرفيس المفرق الثاني عاليمين غرب عيادة الدكتور وحيد علي بـ 50 متر", mapUrl: "" },
-                    { name: "صيدلية الأحلام", region: "وادي الشاطر", address: "وادي الشاطر - الشارع الرئيسي جانب محل خضار احمد", mapUrl: "" }
-                ]
-            },
-            {
-                date: "2026-09-20",
-                dayName: "الأحد",
-                shiftTime: "من الساعة 8:00 مساءً لغاية الساعة 12:00 ليلاً",
-                pharmacies: [
-                    { name: "صيدلية سوزان أحمد", region: "وادي الشاطر", address: "وادي الشاطر - شرق الجامع جانب الطريق باتجاه الكراج الجديد", mapUrl: "" },
-                    { name: "صيدلية ريم عبد الله محمد", region: "الرادار", address: "الرادار - خط السرفيس الرئيسي مقابل مطعم الكمال", mapUrl: "" }
-                ]
-            },
-            {
-                date: "2026-09-21",
-                dayName: "الإثنين",
-                shiftTime: "من الساعة 8:00 مساءً لغاية الساعة 12:00 ليلاً",
-                pharmacies: [
-                    { name: "صيدلية لوزان", region: "رأس الشغري", address: "رأس الشغري - ساحة دوار سرفيس رأس الشغري", mapUrl: "" },
-                    { name: "صيدلية الفردوس", region: "الرادار", address: "الرادار الجنوبي - شمال السورية للتجارة والفرن بـ 200 متر بعد مجمع أبو رمزي جانب نادي تايغر", mapUrl: "" }
-                ]
-            },
-            {
-                date: "2026-09-22",
-                dayName: "الثلاثاء",
-                shiftTime: "من الساعة 8:00 مساءً لغاية الساعة 12:00 ليلاً",
-                pharmacies: [
-                    { name: "صيدلية الصحة والسلامة", region: "رأس الشغري", address: "رأس الشغري - دخلة الفرن المقابلة للمشفى الوطني جنوبا جانب حلويات الروضة", mapUrl: "" },
-                    { name: "صيدلية يارا", region: "الرادار", address: "الرادار - طريق عام الرادار شرق سكة القطار بـ 50 متر جانب محل عطر الورد", mapUrl: "" }
-                ]
-            },
-            {
-                date: "2026-09-23",
-                dayName: "الأربعاء",
-                shiftTime: "من الساعة 8:00 مساءً لغاية الساعة 12:00 ليلاً",
-                pharmacies: [
-                    { name: "صيدلية الفؤاد", region: "رأس الشغري", address: "رأس الشغري - مدخل حي رأس الشغري بعد الحاجز القديم بـ 50 متر", mapUrl: "" },
-                    { name: "صيدلية هبه", region: "الرادار", address: "الرادار - شرق مدخل الرادار الرئيسي خط السرفيس بـ 100 متر", mapUrl: "" }
-                ]
-            },
-            {
-                date: "2026-09-24",
-                dayName: "الخميس",
-                shiftTime: "من الساعة 8:00 مساءً لغاية الساعة 12:00 ليلاً",
-                pharmacies: [
-                    { name: "صيدلية روعة", region: "رأس الشغري", address: "رأس الشغري - خط السرفيس جانب اكسسوارات زهر العيد", mapUrl: "" },
-                    { name: "صيدلية ايمان فارما", region: "وادي الشاطر", address: "وادي الشاطر - شرق الجامع بـ 50 متر", mapUrl: "" }
-                ]
-            },
-            {
-                date: "2026-09-25",
-                dayName: "الجمعة",
-                shiftTime: "فترتين: (8:00 صباحاً - 4:00 عصراً) | (4:00 عصراً - 12:00 ليلاً)",
-                pharmacies: [
-                    { name: "صيدلية الرادار", region: "الرادار", address: "الرادار - شمال معمل التمز جانب روضة الدالي ومغسلة مخلوف", shiftPeriod: "من الساعة 8:00 صباحاً لغاية الساعة 4:00 عصراً", mapUrl: "" },
-                    { name: "صيدلية ميس", region: "رأس الشغري", address: "رأس الشغري - جنوب مدرسة الابتدائي جانب مكتبة الأمير", shiftPeriod: "من الساعة 8:00 صباحاً لغاية الساعة 4:00 عصراً", mapUrl: "" },
-                    { name: "صيدلية عمريت", region: "وادي الشاطر", address: "وادي الشاطر - خط السرفيس أول شارع بوظة عمو علي قبل دخلة عيادة الدكتور رباح سلوم", shiftPeriod: "من الساعة 4:00 مساءً لغاية الساعة 12:00 ليلاً", mapUrl: "https://maps.app.goo.gl/KtEV5xJbgi9fd2u4A" },
-                    { name: "صيدلية مروة حمود", region: "الرادار", address: "الرادار - شمال معمل التميز - بيت ملحم غرب فادي للزجاج بـ 100 متر", shiftPeriod: "من الساعة 4:00 مساءً لغاية الساعة 12:00 ليلاً", mapUrl: "" }
-                ]
             }
         ];
 
@@ -809,31 +702,7 @@
             { name: "صيدلية مروة حمود", region: "الرادار", address: "الرادار - شمال معمل التميز - بيت ملحم غرب فادي للزجاج بـ 100 متر", mapUrl: "" },
             { name: "صيدلية ديما", region: "وادي الشاطر", address: "وادي الشاطر - شرق جامع أرواد ومطعم الناعورة بـ 300 متر جانب عيادة الدكتور رباح سلوم", mapUrl: "https://maps.app.goo.gl/mjdacrapbkGCV59j9" },
             { name: "صيدلية الغوى", region: "الرادار", address: "الرادار - جنوب الباب الشرقي للمدرسة - النسق الثاني عن الشارع الرئيسي", mapUrl: "" },
-            { name: "صيدلية الصبا", region: "الرادار", address: "الرادار - شمال غرب النقطة العسكرية السابقة بـ 50 متر - نسق ثاني عن الشارع الرئيسي غرباً", mapUrl: "" },
-            { name: "صيدلية الشفاء", region: "وادي الشاطر", address: "طريق عام طرطوس الرادار الشارع الرئيسي مفرق وادي الشاطر جانب أفران الحموي", mapUrl: "" },
-            { name: "صيدلية نور", region: "الرادار", address: "الرادار - جانب مستوصف مقابل مدرسة الرادار", mapUrl: "" },
-            { name: "صيدلية الربيع", region: "وادي الشاطر", address: "وادي الشاطر - شرق مدرسة وادي الشاطر", mapUrl: "" },
-            { name: "صيدلية الورد", region: "وادي الشاطر", address: "وادي الشاطر - شمال شرق مدرسة وادي الشاطر جانب محل علي احمد", mapUrl: "" },
-            { name: "صيدلية محمد", region: "الرادار", address: "الرادار - شمال المستوصف بـ 200 متر جانب مركز عطر الورد", mapUrl: "" },
-            { name: "صيدلية هبه", region: "الرادار", address: "الرادار - شرق مدخل الرادار الرئيسي خط السرفيس بـ 100 متر", mapUrl: "" },
-            { name: "صيدلية العمار", region: "رأس الشغري", address: "رأس الشغري - خط السرفيس جانب مغسلة الوسيم مقابل سوبر ماركت الحبيب", mapUrl: "" },
-            { name: "صيدلية محمد صالح", region: "الرادار", address: "الرادار - جنوب مفرق الرادار بـ 50 متر طريق عام طرطوس الحميدية", mapUrl: "" },
-            { name: "صيدلية الأمل", region: "الرادار", address: "الرادار - مقابل النقطة العسكرية السابقة جانب مكتبة الرادار", mapUrl: "" },
-            { name: "صيدلية سمارة", region: "وادي الشاطر", address: "وادي الشاطر - غرب سكة القطار شمال الهيثم للتجارة بـ 50 متر", mapUrl: "" },
-            { name: "صيدلية ياره", region: "الرادار", address: "الرادار - غرب النقطة العسكرية القديمة بـ 70 متر جانب المؤسسة القديمة", mapUrl: "" },
-            { name: "صيدلية سراء خضور", region: "الرادار", address: "الرادار - شرق دوار رأس الشغري خط السرفيس المفرق الثاني عاليمين غرب عيادة الدكتور وحيد علي بـ 50 متر", mapUrl: "" },
-            { name: "صيدلية الأحلام", region: "وادي الشاطر", address: "وادي الشاطر - الشارع الرئيسي جانب محل خضار احمد", mapUrl: "" },
-            { name: "صيدلية سوزان أحمد", region: "وادي الشاطر", address: "وادي الشاطر - شرق الجامع جانب الطريق باتجاه الكراج الجديد", mapUrl: "" },
-            { name: "صيدلية ريم عبد الله محمد", region: "الرادار", address: "الرادار - خط السرفيس الرئيسي مقابل مطعم الكمال", mapUrl: "" },
-            { name: "صيدلية لوزان", region: "رأس الشغري", address: "رأس الشغري - ساحة دوار سرفيس رأس الشغري", mapUrl: "" },
-            { name: "صيدلية الفردوس", region: "الرادار", address: "الرادار الجنوبي - شمال السورية للتجارة والفرن بـ 200 متر بعد مجمع أبو رمزي جانب نادي تايغر", mapUrl: "" },
-            { name: "صيدلية الصحة والسلامة", region: "رأس الشغري", address: "رأس الشغري - دخلة الفرن المقابلة للمشفى الوطني جنوبا جانب حلويات الروضة", mapUrl: "" },
-            { name: "صيدلية يارا", region: "الرادار", address: "الرادار - طريق عام الرادار شرق سكة القطار بـ 50 متر جانب محل عطر الورد", mapUrl: "" },
-            { name: "صيدلية الفؤاد", region: "رأس الشغري", address: "رأس الشغري - مدخل حي رأس الشغري بعد الحاجز القديم بـ 50 متر", mapUrl: "" },
-            { name: "صيدلية روعة", region: "رأس الشغري", address: "رأس الشغري - خط السرفيس جانب اكسسوارات زهر العيد", mapUrl: "" },
-            { name: "صيدلية ايمان فارما", region: "وادي الشاطر", address: "وادي الشاطر - شرق الجامع بـ 50 متر", mapUrl: "" },
-            { name: "صيدلية الرادار", region: "الرادار", address: "الرادار - شمال معمل التمز جانب روضة الدالي ومغسلة مخلوف", mapUrl: "" },
-            { name: "صيدلية ميس", region: "رأس الشغري", address: "رأس الشغري - جنوب مدرسة الابتدائي جانب مكتبة الأمير", mapUrl: "" }
+            { name: "صيدلية الأمل", region: "الرادار", address: "الرادار - مقابل النقطة العسكرية السابقة جانب مكتبة الرادار", mapUrl: "" }
         ];
 
         // State Variables
@@ -841,6 +710,7 @@
         let masterPharmacies = [];
         let adminPassword = '135792468';
         let visibleDaysLimit = 14;
+        let editingMasterIndex = null;
 
         let analyticsData = {
             pageViews: 0,
@@ -855,6 +725,15 @@
         let favoritePharmacies = JSON.parse(localStorage.getItem('fav_pharmacies') || '[]');
         let currentCardTheme = 'dark';
         let isAdminLoggedIn = false;
+
+        // Clock display
+        setInterval(() => {
+            const clockEl = document.getElementById('current-clock-display');
+            if (clockEl) {
+                const now = new Date();
+                clockEl.textContent = now.toLocaleTimeString('ar-EG');
+            }
+        }, 1000);
 
         // Sync Realtime Data from Firebase
         onValue(scheduleRef, (snapshot) => {
@@ -895,7 +774,6 @@
             }
         });
 
-        // Sync Analytics from Firebase
         onValue(analyticsRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -1234,9 +1112,7 @@
             }).join('');
 
             grid.querySelectorAll('.map-link').forEach(link => {
-                link.onclick = () => {
-                    incrementAnalytic('mapClicks');
-                };
+                link.onclick = () => incrementAnalytic('mapClicks');
             });
 
             grid.querySelectorAll('.fav-btn').forEach(btn => {
@@ -1292,29 +1168,39 @@
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">وقت/نص المناوبة لهذا اليوم:</label>
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">وقت/نص المناوبة العام لهذا اليوم:</label>
                             <input type="text" value="${day.shiftTime || ''}" data-shift-date="${day.date}" class="shift-time-input w-full px-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100">
                         </div>
 
                         <div>
-                            <span class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-2">الصيدليات المناوبة فيه:</span>
+                            <span class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-2">الصيدليات المناوبة فيه وتحديد فتراتها:</span>
                             <div class="space-y-2">
                                 ${dayPharmacies.length > 0 ? dayPharmacies.map(p => `
-                                    <div class="flex items-center justify-between bg-white dark:bg-slate-700/70 p-2.5 rounded-xl border border-slate-200/60 dark:border-slate-600 text-xs">
-                                        <div>
+                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white dark:bg-slate-700/70 p-3 rounded-xl border border-slate-200/60 dark:border-slate-600 text-xs gap-2">
+                                        <div class="flex-grow">
                                             <span class="font-bold text-slate-800 dark:text-slate-100">${p.name}</span>
                                             <span class="text-[10px] text-emerald-600 dark:text-emerald-400 mr-2">(${p.region})</span>
                                         </div>
-                                        <button data-remove-pharm="${p.name}" data-date="${day.date}" class="remove-pharm-from-date-btn text-slate-400 hover:text-rose-500 p-1">
-                                            <i class="fa-solid fa-xmark"></i>
-                                        </button>
+
+                                        <div class="flex items-center gap-2">
+                                            <!-- تحديد المناوبة صباحية ولا مسائية -->
+                                            <select data-pharm-shift-date="${day.date}" data-pharm-name="${p.name}" class="pharm-shift-select bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-[11px] font-bold rounded-lg px-2 py-1 text-slate-700 dark:text-slate-200 focus:outline-none">
+                                                <option value="" ${!p.shiftPeriod ? 'selected' : ''}>-- الفترة (حسب اليوم) --</option>
+                                                <option value="من الساعة 8:00 صباحاً لغاية الساعة 4:00 عصراً" ${p.shiftPeriod === 'من الساعة 8:00 صباحاً لغاية الساعة 4:00 عصراً' ? 'selected' : ''}>صباحية (8 ص - 4 ع)</option>
+                                                <option value="من الساعة 4:00 مساءً لغاية الساعة 12:00 ليلاً" ${p.shiftPeriod === 'من الساعة 4:00 مساءً لغاية الساعة 12:00 ليلاً' ? 'selected' : ''}>مسائية (4 ع - 12 ل)</option>
+                                            </select>
+
+                                            <button data-remove-pharm="${p.name}" data-date="${day.date}" class="remove-pharm-from-date-btn text-slate-400 hover:text-rose-500 p-1">
+                                                <i class="fa-solid fa-xmark text-sm"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 `).join('') : `<p class="text-xs text-slate-400 italic">لم يتم تعيين أي صيدلية مناوبة لهذا اليوم بعد.</p>`}
                             </div>
                         </div>
 
                         <div class="space-y-2 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
-                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300">بحث واختيار صيدلية لإضافتها لهذا اليوم:</label>
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300">بحث وااختيار صيدلية لإضافتها لهذا اليوم مع تحديد الفترة:</label>
                             <div class="flex flex-col sm:flex-row items-center gap-2">
                                 <div class="relative w-full">
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400 text-xs">
@@ -1323,8 +1209,13 @@
                                     <input type="text" id="search-pharmacy-select-${day.date}" data-search-date="${day.date}" placeholder="اكتب اسم الصيدلية أو المنطقة..." class="search-select-input w-full pr-8 pl-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                 </div>
                                 <div class="flex items-center gap-2 w-full sm:w-auto shrink-0">
-                                    <select id="add-pharmacy-select-${day.date}" class="w-full sm:w-56 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                        <option value="">-- اختر صيدلية من الدليل --</option>
+                                    <select id="add-pharmacy-shift-period-${day.date}" class="bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-700 dark:text-slate-200">
+                                        <option value="">فترة اليوم</option>
+                                        <option value="من الساعة 8:00 صباحاً لغاية الساعة 4:00 عصراً">صباحية (8 ص - 4 ع)</option>
+                                        <option value="من الساعة 4:00 مساءً لغاية الساعة 12:00 ليلاً">مسائية (4 ع - 12 ل)</option>
+                                    </select>
+                                    <select id="add-pharmacy-select-${day.date}" class="w-full sm:w-48 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                        <option value="">-- اختر صيدلية --</option>
                                         ${availableToSelect.map(mp => `<option value="${mp.name}">${mp.name} (${mp.region})</option>`).join('')}
                                     </select>
                                     <button data-add-to-date="${day.date}" class="add-to-date-btn shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-1 shadow-sm">
@@ -1336,6 +1227,22 @@
                     </div>
                 `;
             }).join('');
+
+            container.querySelectorAll('.pharm-shift-select').forEach(select => {
+                select.onchange = () => {
+                    const dateStr = select.getAttribute('data-pharm-shift-date');
+                    const pharmName = select.getAttribute('data-pharm-name');
+                    const dayObj = scheduleData.find(d => d.date === dateStr);
+                    if (dayObj && dayObj.pharmacies) {
+                        const targetPharm = dayObj.pharmacies.find(p => p.name === pharmName);
+                        if (targetPharm) {
+                            targetPharm.shiftPeriod = select.value;
+                            saveScheduleState();
+                            showToast(`تم تحديث فترة المناوبة لـ (${pharmName})`);
+                        }
+                    }
+                };
+            });
 
             container.querySelectorAll('.remove-date-btn').forEach(btn => {
                 btn.onclick = () => {
@@ -1390,7 +1297,7 @@
                         (mp.name.toLowerCase().includes(query) || mp.region.toLowerCase().includes(query) || mp.address.toLowerCase().includes(query))
                     );
 
-                    select.innerHTML = `<option value="">-- ${availableToSelect.length > 0 ? 'اختر صيدلية من الدليل' : 'لا توجد نتائج مطابقة'} --</option>` +
+                    select.innerHTML = `<option value="">-- ${availableToSelect.length > 0 ? 'اختر صيدلية' : 'لا توجد نتائج'} --</option>` +
                         availableToSelect.map(mp => `<option value="${mp.name}">${mp.name} (${mp.region})</option>`).join('');
                 };
             });
@@ -1399,7 +1306,10 @@
                 btn.onclick = () => {
                     const dateStr = btn.getAttribute('data-add-to-date');
                     const selectEl = document.getElementById(`add-pharmacy-select-${dateStr}`);
+                    const shiftPeriodEl = document.getElementById(`add-pharmacy-shift-period-${dateStr}`);
                     const selectedName = selectEl.value;
+                    const selectedShiftPeriod = shiftPeriodEl ? shiftPeriodEl.value : "";
+
                     if (!selectedName) return;
 
                     const dayObj = scheduleData.find(d => d.date === dateStr);
@@ -1416,12 +1326,18 @@
                         return;
                     }
 
-                    dayObj.pharmacies.push({
+                    const newPharmacyEntry = {
                         name: masterItem.name,
                         region: masterItem.region,
                         address: masterItem.address,
                         mapUrl: masterItem.mapUrl || ""
-                    });
+                    };
+
+                    if (selectedShiftPeriod) {
+                        newPharmacyEntry.shiftPeriod = selectedShiftPeriod;
+                    }
+
+                    dayObj.pharmacies.push(newPharmacyEntry);
 
                     saveScheduleState();
                     showToast(`تمت إضافة ${masterItem.name} إلى يوم ${dayObj.dayName}`);
@@ -1438,21 +1354,37 @@
                 return;
             }
 
-            container.innerHTML = masterPharmacies.map(p => `
-                <div class="bg-slate-50 dark:bg-slate-800/80 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2 text-xs">
-                    <div class="flex items-center justify-between">
-                        <span class="font-black text-slate-900 dark:text-slate-100 text-sm">${p.name}</span>
-                        <span class="bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-200 font-bold px-2 py-0.5 rounded-md text-[10px]">${p.region}</span>
+            container.innerHTML = masterPharmacies.map((p, idx) => `
+                <div class="bg-slate-50 dark:bg-slate-800/80 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2 text-xs flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-black text-slate-900 dark:text-slate-100 text-sm">${p.name}</span>
+                            <span class="bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-200 font-bold px-2 py-0.5 rounded-md text-[10px]">${p.region}</span>
+                        </div>
+                        <p class="text-slate-600 dark:text-slate-300 leading-snug">${p.address}</p>
                     </div>
-                    <p class="text-slate-600 dark:text-slate-300 leading-snug">${p.address}</p>
-                    <div class="flex items-center justify-between pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
+
+                    <div class="flex items-center justify-between pt-2 border-t border-slate-200/60 dark:border-slate-700/60 mt-2">
                         ${p.mapUrl ? `<a href="${p.mapUrl}" target="_blank" class="text-emerald-600 dark:text-emerald-400 font-bold hover:underline flex items-center gap-1"><i class="fa-solid fa-map-location-dot"></i> الخريطة</a>` : '<span class="text-slate-400 italic">بدون خريطة</span>'}
-                        <button data-delete-master="${p.name}" class="delete-master-btn text-rose-500 hover:text-rose-700 font-bold flex items-center gap-1">
-                            <i class="fa-solid fa-trash-can"></i> حذف
-                        </button>
+                        
+                        <div class="flex items-center gap-2">
+                            <button data-edit-master="${idx}" class="edit-master-btn text-amber-600 hover:text-amber-700 dark:text-amber-400 font-bold flex items-center gap-1 bg-amber-50 dark:bg-amber-950/50 px-2 py-1 rounded-lg">
+                                <i class="fa-solid fa-pen-to-square"></i> تعديل
+                            </button>
+                            <button data-delete-master="${p.name}" class="delete-master-btn text-rose-500 hover:text-rose-700 font-bold flex items-center gap-1 bg-rose-50 dark:bg-rose-950/50 px-2 py-1 rounded-lg">
+                                <i class="fa-solid fa-trash-can"></i> حذف
+                            </button>
+                        </div>
                     </div>
                 </div>
             `).join('');
+
+            container.querySelectorAll('.edit-master-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const idx = parseInt(btn.getAttribute('data-edit-master'));
+                    startEditingMasterPharmacy(idx);
+                };
+            });
 
             container.querySelectorAll('.delete-master-btn').forEach(btn => {
                 btn.onclick = () => {
@@ -1470,7 +1402,31 @@
             });
         }
 
-        /* Enhanced professional card design rendering: matching exact requirements with improved color grading and aesthetics */
+        function startEditingMasterPharmacy(index) {
+            const pharmacy = masterPharmacies[index];
+            if (!pharmacy) return;
+
+            editingMasterIndex = index;
+            document.getElementById('dir-name-input').value = pharmacy.name;
+            document.getElementById('dir-region-input').value = pharmacy.region;
+            document.getElementById('dir-address-input').value = pharmacy.address;
+            document.getElementById('dir-map-input').value = pharmacy.mapUrl || '';
+
+            document.getElementById('dir-form-title').innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-500"></i> تعديل بيانات الصيدلية (${pharmacy.name})`;
+            document.getElementById('save-dir-btn-text').textContent = "تحديث بيانات الصيدلية";
+            document.getElementById('cancel-edit-dir-btn').classList.remove('hidden');
+
+            document.getElementById('add-master-pharmacy-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function cancelEditingMasterPharmacy() {
+            editingMasterIndex = null;
+            document.getElementById('add-master-pharmacy-form').reset();
+            document.getElementById('dir-form-title').innerHTML = `<i class="fa-solid fa-house-medical-medical text-emerald-600 dark:text-emerald-400"></i> إضافة صيدلية جديدة إلى الدليل العام`;
+            document.getElementById('save-dir-btn-text').textContent = "حفظ الصيدلية بالدليل";
+            document.getElementById('cancel-edit-dir-btn').classList.add('hidden');
+        }
+
         function openFacebookModal() {
             const dateObj = scheduleData.find(d => d.date === selectedDate);
             if (!dateObj) {
@@ -1529,11 +1485,9 @@
 
                     return `
                     <div class="bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-emerald-950/70 border-2 border-emerald-500/30 rounded-3xl ${cardPadding} shadow-xl flex flex-col justify-between backdrop-blur-md relative overflow-hidden group">
-                        <!-- Subtle card highlight bar -->
                         <div class="absolute top-0 right-0 bottom-0 w-2 bg-gradient-to-b from-emerald-400 to-teal-500 rounded-r-xl"></div>
 
                         <div class="pr-3">
-                            <!-- اسم المنطقة وبجانبها مباشرة كلمة عدسة وادي الشاطر ( عبدالحميد ديب ) -->
                             <div class="flex items-center flex-wrap gap-2.5 mb-3">
                                 <div class="bg-emerald-500/25 text-emerald-300 font-extrabold ${badgeSize} rounded-full border border-emerald-500/40 flex items-center gap-1.5 shrink-0 shadow-sm">
                                     <i class="fa-solid fa-location-dot text-emerald-400"></i>
@@ -1545,20 +1499,17 @@
                                 </div>
                             </div>
 
-                            <!-- اسم الصيدلية -->
                             <h3 class="${titleSize} text-white mb-2.5 flex items-center gap-2.5 tracking-wide">
                                 <i class="fa-solid fa-prescription-bottle-medical text-emerald-400 shrink-0 text-xl"></i>
                                 <span>${p.name}</span>
                             </h3>
 
-                            <!-- العنوان -->
                             <p class="${addressPadding} text-slate-200 leading-relaxed flex items-start gap-2.5 bg-slate-950/70 rounded-2xl border border-emerald-500/10 shadow-inner">
                                 <i class="fa-solid fa-map-pin text-emerald-400 shrink-0 mt-1"></i>
                                 <span>${p.address}</span>
                             </p>
                         </div>
 
-                        <!-- أوقات المناوبة للصيدلية -->
                         <div class="bg-emerald-950/80 border-2 border-emerald-500/30 rounded-2xl ${shiftPadding} flex items-center gap-2.5 text-emerald-200 font-black shadow-inner mt-2">
                             <i class="fa-regular fa-clock text-emerald-400 shrink-0 text-base"></i>
                             <span>أوقات المناوبة: ${shiftPeriodText}</span>
@@ -1602,318 +1553,330 @@
             }
         }
 
-        function downloadFacebookCard() {
-            const card = document.getElementById('facebook-export-card');
-            const downloadBtn = document.getElementById('download-img-btn');
-
-            downloadBtn.disabled = true;
-            downloadBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-base"></i> <span>جاري توليد الصورة...</span>`;
-
-            const currentTransform = card.style.transform;
-            card.style.transform = 'none';
-
-            html2canvas(card, {
-                width: 1080,
-                height: 1080,
-                scale: 1,
-                useCORS: true,
-                backgroundColor: null,
-                logging: false
-            }).then(canvas => {
-                card.style.transform = currentTransform;
-
-                const link = document.createElement('a');
-                link.download = `صيدليات_المناوبة_${selectedDate}.png`;
-                link.href = canvas.toDataURL('image/png', 1.0);
-                link.click();
-
-                downloadBtn.disabled = false;
-                downloadBtn.innerHTML = `<i class="fa-solid fa-download text-base"></i> <span>تحميل الصورة عالية الدقة (PNG)</span>`;
-                
-                incrementAnalytic('imageExports');
-                showToast("تم تنزيل صورة منشور الفيسبوك بنجاح!");
-            }).catch(err => {
-                card.style.transform = currentTransform;
-                downloadBtn.disabled = false;
-                downloadBtn.innerHTML = `<i class="fa-solid fa-download text-base"></i> <span>تحميل الصورة عالية الدقة (PNG)</span>`;
-                showToast("حدث خطأ أثناء تصدير الصورة، حاول مجدداً.", "error");
-            });
-        }
-
-        // Global Event Listeners Setup
+        // Initialize Event Listeners
         document.addEventListener('DOMContentLoaded', () => {
-            const dateSelector = document.getElementById('date-selector');
-            if (dateSelector) {
-                dateSelector.onchange = (e) => {
-                    selectedDate = e.target.value;
-                    renderPharmacies();
-                };
+            // Dark Mode Toggle
+            const toggleDarkBtn = document.getElementById('toggle-dark-btn');
+            const themeIcon = document.getElementById('theme-icon');
+
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                if (themeIcon) themeIcon.className = 'fa-solid fa-sun text-amber-300 text-base';
+            } else {
+                document.documentElement.classList.remove('dark');
+                if (themeIcon) themeIcon.className = 'fa-solid fa-moon text-base';
             }
 
-            const setTodayBtn = document.getElementById('set-today-btn');
-            if (setTodayBtn) setTodayBtn.onclick = setTodayDate;
+            toggleDarkBtn.onclick = () => {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                    themeIcon.className = 'fa-solid fa-moon text-base';
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                    themeIcon.className = 'fa-solid fa-sun text-amber-300 text-base';
+                }
+            };
 
-            const activeShiftBtn = document.getElementById('active-shift-btn');
-            if (activeShiftBtn) {
-                activeShiftBtn.onclick = () => {
-                    filterActiveShiftOnly = !filterActiveShiftOnly;
-                    const badgeStatus = document.getElementById('active-badge-status');
-                    if (filterActiveShiftOnly) {
-                        activeShiftBtn.className = 'shrink-0 bg-emerald-600 text-white border border-emerald-500 px-3.5 py-2.5 rounded-xl text-xs font-bold shadow-md transition-all flex items-center gap-2';
-                        badgeStatus.className = 'w-2.5 h-2.5 rounded-full bg-white pulse-badge';
-                    } else {
-                        activeShiftBtn.className = 'shrink-0 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:border-emerald-500 transition-all flex items-center gap-2';
-                        badgeStatus.className = 'w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600';
-                    }
-                    renderPharmacies();
-                };
-            }
+            // Admin Login Modal Trigger
+            document.getElementById('admin-menu-btn').onclick = () => {
+                if (isAdminLoggedIn) {
+                    openAdminModal();
+                } else {
+                    openAuthModal();
+                }
+            };
 
-            document.querySelectorAll('#region-filters button').forEach(btn => {
-                btn.onclick = () => filterRegion(btn.getAttribute('data-region'));
-            });
+            document.getElementById('close-auth-modal-btn').onclick = closeAuthModal;
 
-            const shareWhatsAppBtn = document.getElementById('share-website-whatsapp-btn');
-            if (shareWhatsAppBtn) {
-                shareWhatsAppBtn.onclick = () => {
-                    incrementAnalytic('whatsappShares');
-                    const text = `💊 *دليل الصيدليات المناوبة الرسمية*\n(رأس الشغري - الرادار - وادي الشاطر)\n\nتابع جدول الصيدليات المناوبة اليومية عبر الرابط:\nhttps://duty-pharmacies-directory-963.github.io/-----/`;
-                    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
-                };
-            }
+            document.getElementById('toggle-auth-pass-btn').onclick = () => {
+                const input = document.getElementById('auth-password-input');
+                const icon = document.getElementById('auth-pass-toggle-icon');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.className = 'fa-solid fa-eye-slash';
+                } else {
+                    input.type = 'password';
+                    icon.className = 'fa-solid fa-eye';
+                }
+            };
 
-            const adminMenuBtn = document.getElementById('admin-menu-btn');
-            if (adminMenuBtn) {
-                adminMenuBtn.onclick = () => {
-                    if (isAdminLoggedIn) {
-                        openAdminModal();
-                    } else {
-                        openAuthModal();
-                    }
-                };
-            }
+            document.getElementById('auth-form').onsubmit = (e) => {
+                e.preventDefault();
+                const passInput = document.getElementById('auth-password-input').value;
+                if (passInput === adminPassword) {
+                    isAdminLoggedIn = true;
+                    updateAdminBadgePill();
+                    closeAuthModal();
+                    openAdminModal();
+                    showToast("تم تسجيل الدخول كمسؤول بنجاح");
+                } else {
+                    document.getElementById('auth-error-msg').classList.remove('hidden');
+                }
+            };
 
-            const authForm = document.getElementById('auth-form');
-            if (authForm) {
-                authForm.onsubmit = (e) => {
-                    e.preventDefault();
-                    const val = document.getElementById('auth-password-input').value;
-                    if (val === adminPassword) {
-                        isAdminLoggedIn = true;
-                        updateAdminBadgePill();
-                        closeAuthModal();
-                        openAdminModal();
-                        showToast("تم تسجيل الدخول بنجاح إلى لوحة التحكم.");
-                    } else {
-                        document.getElementById('auth-error-msg').classList.remove('hidden');
-                    }
-                };
-            }
-
-            const closeAuthBtn = document.getElementById('close-auth-modal-btn');
-            if (closeAuthBtn) closeAuthBtn.onclick = closeAuthModal;
-
-            const toggleAuthPassBtn = document.getElementById('toggle-auth-pass-btn');
-            if (toggleAuthPassBtn) {
-                toggleAuthPassBtn.onclick = () => {
-                    const input = document.getElementById('auth-password-input');
-                    const icon = document.getElementById('auth-pass-toggle-icon');
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        icon.className = 'fa-solid fa-eye-slash';
-                    } else {
-                        input.type = 'password';
-                        icon.className = 'fa-solid fa-eye';
-                    }
-                };
-            }
-
-            const closeAdminBtn = document.getElementById('close-admin-modal-btn');
-            if (closeAdminBtn) closeAdminBtn.onclick = closeAdminModal;
-
+            // Admin Dashboard Tabs
             document.getElementById('tab-btn-schedule').onclick = () => switchAdminTab('tab-schedule');
             document.getElementById('tab-btn-directory').onclick = () => switchAdminTab('tab-directory');
             document.getElementById('tab-btn-analytics').onclick = () => switchAdminTab('tab-analytics');
             document.getElementById('tab-btn-settings').onclick = () => switchAdminTab('tab-settings');
 
-            const visibleDaysSelect = document.getElementById('visible-days-count-select');
-            if (visibleDaysSelect) {
-                visibleDaysSelect.onchange = (e) => {
-                    visibleDaysLimit = parseInt(e.target.value);
-                    saveSettingsState();
-                    initDateSelector();
-                    renderPharmacies();
-                    showToast("تم تحديث عدد الأيام المعروضة.");
+            document.getElementById('close-admin-modal-btn').onclick = closeAdminModal;
+
+            // Date Selector Change
+            document.getElementById('date-selector').onchange = (e) => {
+                selectedDate = e.target.value;
+                renderPharmacies();
+            };
+
+            document.getElementById('set-today-btn').onclick = setTodayDate;
+
+            // Region Filters
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const region = btn.getAttribute('data-region');
+                    filterRegion(region);
                 };
-            }
+            });
 
-            const addScheduleForm = document.getElementById('add-schedule-date-form');
-            if (addScheduleForm) {
-                const dateInput = document.getElementById('new-date-input');
-                const dayNameInput = document.getElementById('new-dayname-input');
+            // Active Shift Toggle Button
+            document.getElementById('active-shift-btn').onclick = () => {
+                filterActiveShiftOnly = !filterActiveShiftOnly;
+                const statusBadge = document.getElementById('active-badge-status');
+                const btn = document.getElementById('active-shift-btn');
 
-                dateInput.onchange = () => {
-                    if (!dateInput.value) return;
-                    const d = new Date(dateInput.value);
-                    const daysMap = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-                    dayNameInput.value = daysMap[d.getDay()];
-                };
+                if (filterActiveShiftOnly) {
+                    statusBadge.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 pulse-badge';
+                    btn.className = 'shrink-0 bg-emerald-50 dark:bg-emerald-950/60 border-2 border-emerald-500 px-3.5 py-2.5 rounded-xl text-xs font-bold text-emerald-800 dark:text-emerald-200 transition-all flex items-center gap-2 shadow-sm';
+                } else {
+                    statusBadge.className = 'w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600';
+                    btn.className = 'shrink-0 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:border-emerald-500 transition-all flex items-center gap-2';
+                }
 
-                addScheduleForm.onsubmit = (e) => {
-                    e.preventDefault();
-                    const dateVal = dateInput.value;
-                    const dayNameVal = dayNameInput.value;
+                renderPharmacies();
+            };
 
-                    if (scheduleData.some(d => d.date === dateVal)) {
-                        showToast("هذا التاريخ مضاف بالفعل في الجدول!", "error");
-                        return;
-                    }
+            document.getElementById('reset-filters-btn').onclick = () => {
+                selectedRegion = 'all';
+                filterActiveShiftOnly = false;
+                filterRegion('all');
+                document.getElementById('active-badge-status').className = 'w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600';
+                document.getElementById('active-shift-btn').className = 'shrink-0 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:border-emerald-500 transition-all flex items-center gap-2';
+                setTodayDate();
+            };
 
-                    scheduleData.unshift({
-                        date: dateVal,
-                        dayName: dayNameVal,
-                        shiftTime: "من الساعة 8:00 مساءً لغاية الساعة 12:00 ليلاً",
-                        pharmacies: []
+            // Master Pharmacy Form Submit Handler (ADD / EDIT)
+            document.getElementById('add-master-pharmacy-form').onsubmit = (e) => {
+                e.preventDefault();
+                const name = document.getElementById('dir-name-input').value.trim();
+                const region = document.getElementById('dir-region-input').value;
+                const address = document.getElementById('dir-address-input').value.trim();
+                const mapUrl = document.getElementById('dir-map-input').value.trim();
+
+                if (!name || !address) return;
+
+                if (editingMasterIndex !== null) {
+                    const oldName = masterPharmacies[editingMasterIndex].name;
+                    masterPharmacies[editingMasterIndex] = { name, region, address, mapUrl };
+
+                    // Update references in all existing schedule entries
+                    scheduleData.forEach(day => {
+                        if (day.pharmacies) {
+                            day.pharmacies.forEach(p => {
+                                if (p.name === oldName) {
+                                    p.name = name;
+                                    p.region = region;
+                                    p.address = address;
+                                    p.mapUrl = mapUrl;
+                                }
+                            });
+                        }
                     });
 
-                    // Sort schedule by date ascending
-                    scheduleData.sort((a, b) => new Date(a.date) - new Date(b.date));
-
                     saveScheduleState();
-                    addScheduleForm.reset();
-                    initDateSelector();
-                    renderAdminScheduleTab();
-                    showToast(`تمت إضافة التاريخ (${dateVal}) بنجاح.`);
-                };
-            }
-
-            const addMasterForm = document.getElementById('add-master-pharmacy-form');
-            if (addMasterForm) {
-                addMasterForm.onsubmit = (e) => {
-                    e.preventDefault();
-                    const name = document.getElementById('dir-name-input').value.trim();
-                    const region = document.getElementById('dir-region-input').value;
-                    const address = document.getElementById('dir-address-input').value.trim();
-                    const mapUrl = document.getElementById('dir-map-input').value.trim();
-
+                    cancelEditingMasterPharmacy();
+                    showToast(`تم تعديل بيانات صيدلية (${name}) بنجاح`);
+                } else {
                     if (masterPharmacies.some(p => p.name === name)) {
-                        showToast("هذه الصيدلية مسجلة مسبقاً في الدليل العام!", "error");
+                        showToast("هذه الصيدلية مسجلة بالفعل في الدليل!", "error");
                         return;
                     }
 
                     masterPharmacies.push({ name, region, address, mapUrl });
-                    saveMasterPharmaciesState();
-                    addMasterForm.reset();
-                    renderAdminDirectoryTab();
-                    showToast(`تمت إضافة صيدلية (${name}) بنجاح.`);
-                };
-            }
+                    document.getElementById('add-master-pharmacy-form').reset();
+                    showToast(`تمت إضافة (${name}) إلى الدليل بنجاح`);
+                }
 
-            const changePassForm = document.getElementById('change-pass-form');
-            if (changePassForm) {
-                changePassForm.onsubmit = (e) => {
-                    e.preventDefault();
-                    const newPass = document.getElementById('new-password-input').value;
-                    const confirmPass = document.getElementById('confirm-password-input').value;
+                saveMasterPharmaciesState();
+                renderAdminDirectoryTab();
+                renderAdminScheduleTab();
+                renderPharmacies();
+            };
 
-                    if (newPass !== confirmPass) {
-                        showToast("كلمتا السر غير متطابقتين!", "error");
-                        return;
-                    }
+            document.getElementById('cancel-edit-dir-btn').onclick = cancelEditingMasterPharmacy;
 
-                    adminPassword = newPass;
-                    saveSettingsState();
-                    changePassForm.reset();
-                    showToast("تم تحديث كلمة سر المسؤول بنجاح.");
-                };
-            }
+            // Add Schedule Date Form
+            document.getElementById('add-schedule-date-form').onsubmit = (e) => {
+                e.preventDefault();
+                const newDate = document.getElementById('new-date-input').value;
+                const dayName = document.getElementById('new-dayname-input').value.trim();
 
-            const resetDefaultsBtn = document.getElementById('reset-defaults-btn');
-            if (resetDefaultsBtn) {
-                resetDefaultsBtn.onclick = () => {
-                    showConfirmModal(
-                        "استعادة البيانات الافتراضية",
-                        "هل أنت متأكد من استعادة الجدول الأساسي الافتراضي؟ سيتم استبدال التعديلات الحالية.",
-                        () => {
-                            scheduleData = defaultScheduleData;
-                            masterPharmacies = defaultMasterPharmacies;
-                            saveScheduleState();
-                            saveMasterPharmaciesState();
-                            initDateSelector();
-                            renderPharmacies();
-                            renderAdminScheduleTab();
-                            renderAdminDirectoryTab();
-                            showToast("تمت استعادة البيانات الافتراضية بنجاح.");
-                        }
-                    );
-                };
-            }
+                if (!newDate || !dayName) return;
 
-            const resetAnalyticsBtn = document.getElementById('reset-analytics-btn');
-            if (resetAnalyticsBtn) {
-                resetAnalyticsBtn.onclick = () => {
-                    showConfirmModal(
-                        "تصفير الإحصائيات",
-                        "هل تريد حقاً تصفير جميع عدادات الإحصائيات الحالية؟",
-                        () => {
-                            analyticsData = { pageViews: 0, imageExports: 0, whatsappShares: 0, mapClicks: 0 };
-                            set(analyticsRef, analyticsData);
-                            updateAnalyticsUI();
-                            showToast("تم تصفير الإحصائيات بنجاح.");
-                        }
-                    );
-                };
-            }
+                if (scheduleData.some(d => d.date === newDate)) {
+                    showToast("هذا التاريخ مضاف بالفعل في جدول المناوبات!", "error");
+                    return;
+                }
 
-            const openFbModalBtn = document.getElementById('open-fb-modal-btn');
-            if (openFbModalBtn) openFbModalBtn.onclick = openFacebookModal;
+                scheduleData.unshift({
+                    date: newDate,
+                    dayName: dayName,
+                    shiftTime: "من الساعة 8:00 مساءً لغاية الساعة 12:00 ليلاً",
+                    pharmacies: []
+                });
 
-            const closeFbModalBtn = document.getElementById('close-fb-modal-btn');
-            const cancelFbModalBtn = document.getElementById('cancel-fb-modal-btn');
-            const fbModal = document.getElementById('facebook-modal');
+                scheduleData.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            const closeFbModal = () => fbModal.classList.add('hidden');
-            if (closeFbModalBtn) closeFbModalBtn.onclick = closeFbModal;
-            if (cancelFbModalBtn) cancelFbModalBtn.onclick = closeFbModal;
+                saveScheduleState();
+                initDateSelector();
+                renderAdminScheduleTab();
+                renderPharmacies();
+
+                document.getElementById('add-schedule-date-form').reset();
+                showToast(`تم إضافة يوم (${dayName} - ${newDate}) بنجاح`);
+            };
+
+            // Visible Days Select Limit Change
+            document.getElementById('visible-days-count-select').onchange = (e) => {
+                visibleDaysLimit = parseInt(e.target.value);
+                saveSettingsState();
+                initDateSelector();
+                renderPharmacies();
+                showToast(`تم تحديث عدد الأيام المعروضة إلى (${visibleDaysLimit}) أيام`);
+            };
+
+            // Facebook Modal Buttons
+            document.getElementById('open-fb-modal-btn').onclick = () => {
+                incrementAnalytic('imageExports');
+                openFacebookModal();
+            };
+
+            document.getElementById('close-fb-modal-btn').onclick = () => {
+                document.getElementById('facebook-modal').classList.add('hidden');
+            };
+
+            document.getElementById('cancel-fb-modal-btn').onclick = () => {
+                document.getElementById('facebook-modal').classList.add('hidden');
+            };
 
             document.getElementById('theme-btn-dark').onclick = () => updateCardTheme('dark');
             document.getElementById('theme-btn-emerald').onclick = () => updateCardTheme('emerald');
 
-            const downloadImgBtn = document.getElementById('download-img-btn');
-            if (downloadImgBtn) downloadImgBtn.onclick = downloadFacebookCard;
+            document.getElementById('download-img-btn').onclick = () => {
+                const card = document.getElementById('facebook-export-card');
+                const downloadBtn = document.getElementById('download-img-btn');
 
-            const toggleDarkBtn = document.getElementById('toggle-dark-btn');
-            const themeIcon = document.getElementById('theme-icon');
-            if (toggleDarkBtn) {
-                if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark');
-                    themeIcon.className = 'fa-solid fa-sun text-base';
+                downloadBtn.disabled = true;
+                downloadBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> جاري تجهيز الصورة...`;
+
+                const originalTransform = card.style.transform;
+                card.style.transform = 'none';
+
+                html2canvas(card, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: null,
+                    width: 1080,
+                    height: 1080
+                }).then(canvas => {
+                    card.style.transform = originalTransform;
+
+                    const link = document.createElement('a');
+                    link.download = `الصيدليات_المناوبة_${selectedDate}.png`;
+                    link.href = canvas.toDataURL('image/png', 1.0);
+                    link.click();
+
+                    downloadBtn.disabled = false;
+                    downloadBtn.innerHTML = `<i class="fa-solid fa-download text-base"></i> <span>تحميل الصورة عالية الدقة (PNG)</span>`;
+                    showToast("تم تحميل صورة الفيسبوك بنجاح!");
+                }).catch(err => {
+                    card.style.transform = originalTransform;
+                    downloadBtn.disabled = false;
+                    downloadBtn.innerHTML = `<i class="fa-solid fa-download text-base"></i> <span>تحميل الصورة عالية الدقة (PNG)</span>`;
+                    showToast("حدث خطأ أثناء استخراج الصورة", "error");
+                });
+            };
+
+            // Share Website URL via WhatsApp
+            document.getElementById('share-website-whatsapp-btn').onclick = () => {
+                incrementAnalytic('whatsappShares');
+                const text = `يمكنكم الآن متابعة جدول الصيدليات المناوبة الرسمية (رأس الشغري - الرادار - وادي الشاطر) يومياً وعبر الخريطة المباشرة من خلال الرابط التالي:\nhttps://duty-pharmacies-directory-963.github.io/-----/`;
+                const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+                window.open(url, '_blank');
+            };
+
+            // Settings Forms
+            document.getElementById('change-pass-form').onsubmit = (e) => {
+                e.preventDefault();
+                const newPass = document.getElementById('new-password-input').value;
+                const confirmPass = document.getElementById('confirm-password-input').value;
+
+                if (newPass !== confirmPass) {
+                    showToast("كلمتا السر غير متطابقتين!", "error");
+                    return;
                 }
 
-                toggleDarkBtn.onclick = () => {
-                    if (document.documentElement.classList.contains('dark')) {
-                        document.documentElement.classList.remove('dark');
-                        localStorage.setItem('theme', 'light');
-                        themeIcon.className = 'fa-solid fa-moon text-base';
-                    } else {
-                        document.documentElement.classList.add('dark');
-                        localStorage.setItem('theme', 'dark');
-                        themeIcon.className = 'fa-solid fa-sun text-base';
+                adminPassword = newPass;
+                saveSettingsState();
+                document.getElementById('change-pass-form').reset();
+                showToast("تم تحديث كلمة السر بنجاح!");
+            };
+
+            document.getElementById('toggle-new-pass-btn').onclick = () => {
+                const input = document.getElementById('new-password-input');
+                const icon = document.getElementById('new-pass-icon');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.className = 'fa-solid fa-eye-slash';
+                } else {
+                    input.type = 'password';
+                    icon.className = 'fa-solid fa-eye';
+                }
+            };
+
+            document.getElementById('reset-defaults-btn').onclick = () => {
+                showConfirmModal(
+                    "استعادة البيانات الافتراضية",
+                    "هل أنت متأكد من استعادة الجدول والبيانات الافتراضية؟ سيتم استبدال البيانات الحالية.",
+                    () => {
+                        scheduleData = defaultScheduleData;
+                        masterPharmacies = defaultMasterPharmacies;
+                        saveScheduleState();
+                        saveMasterPharmaciesState();
+                        initDateSelector();
+                        renderPharmacies();
+                        renderAdminScheduleTab();
+                        renderAdminDirectoryTab();
+                        showToast("تمت استعادة البيانات الافتراضية بنجاح.");
                     }
-                };
-            }
+                );
+            };
 
-            // Realtime clock update
-            setInterval(() => {
-                const now = new Date();
-                const clockEl = document.getElementById('current-clock-display');
-                if (clockEl) {
-                    clockEl.textContent = now.toLocaleTimeString('en-US', { hour12: false });
-                }
-            }, 1000);
+            document.getElementById('reset-analytics-btn').onclick = () => {
+                showConfirmModal(
+                    "تصفير الإحصائيات",
+                    "هل أنت متأكد من تصفير عدادات الزيارات والمشاركات بالكامل؟",
+                    () => {
+                        analyticsData = { pageViews: 0, imageExports: 0, whatsappShares: 0, mapClicks: 0 };
+                        set(analyticsRef, analyticsData);
+                        updateAnalyticsUI();
+                        showToast("تم تصفير الإحصائيات بنجاح.");
+                    }
+                );
+            };
         });
     </script>
 </body>
 </html>
-
-```
