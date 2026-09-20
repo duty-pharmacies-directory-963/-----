@@ -125,7 +125,6 @@
             
             <!-- Quick Tools & Metrics -->
             <div class="flex flex-wrap items-center gap-2.5">
-                <!-- زر نسخ الرابط المضاف حديثاً -->
                 <button id="copy-link-btn" class="bg-white/10 hover:bg-white/20 text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black shadow-lg hover:shadow-xl backdrop-blur-md transition-all flex items-center gap-2 border border-white/20 focus:ring-2 focus:ring-white/50">
                     <i class="fa-solid fa-copy text-base text-emerald-200"></i>
                     <span class="hidden md:inline">نسخ رابط الموقع</span>
@@ -648,7 +647,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         // Firebase Configuration
         const firebaseConfig = {
@@ -796,9 +795,12 @@
             updateAnalyticsUI();
         });
 
+        // زيادة الإحصائيات بأمان حقيقي على Firebase لمنع القيم الخاطئة
         function incrementAnalytic(metricKey) {
-            analyticsData[metricKey] = (analyticsData[metricKey] || 0) + 1;
-            set(analyticsRef, analyticsData);
+            const metricRef = ref(db, `analytics/${metricKey}`);
+            runTransaction(metricRef, (currentValue) => {
+                return (currentValue || 0) + 1;
+            });
         }
 
         if (!sessionStorage.getItem('pharmacy_visited_session')) {
@@ -1434,6 +1436,7 @@
         }
 
         function openFacebookModal() {
+            incrementAnalytic('imageExports');
             const dateObj = scheduleData.find(d => d.date === selectedDate);
             if (!dateObj) {
                 showToast("يرجى تحديد تاريخ صحيح أولاً!", "error");
@@ -1561,11 +1564,10 @@
 
         // Initialize Event Listeners
         document.addEventListener('DOMContentLoaded', () => {
-            // حدث نسخ الرابط بالكامل
             const copyLinkBtn = document.getElementById('copy-link-btn');
             if (copyLinkBtn) {
                 copyLinkBtn.onclick = () => {
-                    const targetUrl = "https://duty-pharmacies-directory-963.github.io/-----/";
+                    const targetUrl = window.location.href;
                     navigator.clipboard.writeText(targetUrl).then(() => {
                         showToast("تم نسخ رابط الموقع بنجاح!");
                     }).catch(() => {
@@ -1573,6 +1575,56 @@
                     });
                 };
             }
+
+            const shareWhatsappSiteBtn = document.getElementById('share-website-whatsapp-btn');
+            if (shareWhatsappSiteBtn) {
+                shareWhatsappSiteBtn.onclick = () => {
+                    incrementAnalytic('whatsappShares');
+                    const text = `💊 *دليل الصيدليات المناوبة* (رأس الشغري - الرادار - وادي الشاطر)\nيمكنك متابعة جدول المناوبة اليومي والتفاصيل من هنا:\n${window.location.href}`;
+                    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+                };
+            }
+
+            const openFbBtn = document.getElementById('open-fb-modal-btn');
+            if (openFbBtn) {
+                openFbBtn.onclick = openFacebookModal;
+            }
+
+            const closeFbBtn = document.getElementById('close-fb-modal-btn');
+            if (closeFbBtn) {
+                closeFbBtn.onclick = () => document.getElementById('facebook-modal').classList.add('hidden');
+            }
+
+            const cancelFbBtn = document.getElementById('cancel-fb-modal-btn');
+            if (cancelFbBtn) {
+                cancelFbBtn.onclick = () => document.getElementById('facebook-modal').classList.add('hidden');
+            }
+
+            document.getElementById('theme-btn-dark').onclick = () => updateCardTheme('dark');
+            document.getElementById('theme-btn-emerald').onclick = () => updateCardTheme('emerald');
+
+            document.getElementById('download-img-btn').onclick = () => {
+                const card = document.getElementById('facebook-export-card');
+                const originalTransform = card.style.transform;
+                card.style.transform = 'none';
+
+                html2canvas(card, {
+                    scale: 1,
+                    useCORS: true,
+                    width: 1080,
+                    height: 1080
+                }).then(canvas => {
+                    card.style.transform = originalTransform;
+                    const link = document.createElement('a');
+                    link.download = `pharmacies-${selectedDate}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    showToast("تم تحميل صورة منشور الفيسبوك بنجاح!");
+                }).catch(err => {
+                    card.style.transform = originalTransform;
+                    showToast("حدث خطأ أثناء استخراج الصورة", "error");
+                });
+            };
 
             // Dark Mode Toggle
             const toggleDarkBtn = document.getElementById('toggle-dark-btn');
@@ -1642,6 +1694,14 @@
             document.getElementById('tab-btn-settings').onclick = () => switchAdminTab('tab-settings');
 
             document.getElementById('close-admin-modal-btn').onclick = closeAdminModal;
+
+            document.getElementById('visible-days-count-select').onchange = (e) => {
+                visibleDaysLimit = parseInt(e.target.value);
+                saveSettingsState();
+                initDateSelector();
+                renderPharmacies();
+                showToast("تم تحديث عدد الأيام المعروضة");
+            };
 
             // Date Selector Change
             document.getElementById('date-selector').onchange = (e) => {
@@ -1713,79 +1773,52 @@
                         return;
                     }
 
-                    const newEntry = {
+                    scheduleData.unshift({
                         date: dateVal,
                         dayName: dayNameVal,
                         shiftTime: "من الساعة 8:00 مساءً لغاية الساعة 12:00 ليلاً",
                         pharmacies: []
-                    };
-
-                    scheduleData.unshift(newEntry);
-                    scheduleData.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-                    saveScheduleState();
-                    addScheduleForm.reset();
-                    showToast(`تمت إضافة التاريخ (${dateVal}) بنجاح`);
-                };
-            }
-
-            // Master Pharmacy Form Submit Handler (ADD / EDIT)
-            document.getElementById('add-master-pharmacy-form').onsubmit = (e) => {
-                e.preventDefault();
-                const name = document.getElementById('dir-name-input').value.trim();
-                const region = document.getElementById('dir-region-input').value;
-                const address = document.getElementById('dir-address-input').value.trim();
-                const mapUrl = document.getElementById('dir-map-input').value.trim();
-
-                if (!name || !address) return;
-
-                if (editingMasterIndex !== null) {
-                    const oldName = masterPharmacies[editingMasterIndex].name;
-                    masterPharmacies[editingMasterIndex] = { name, region, address, mapUrl };
-
-                    // Update references in all existing schedule entries
-                    scheduleData.forEach(day => {
-                        if (day.pharmacies) {
-                            day.pharmacies.forEach(p => {
-                                if (p.name === oldName) {
-                                    p.name = name;
-                                    p.region = region;
-                                    p.address = address;
-                                    p.mapUrl = mapUrl;
-                                }
-                            });
-                        }
                     });
 
                     saveScheduleState();
-                    cancelEditingMasterPharmacy();
-                    saveMasterPharmaciesState();
-                    showToast(`تم تعديل بيانات (${name}) بنجاح`);
-                } else {
-                    if (masterPharmacies.some(p => p.name === name)) {
-                        showToast("اسم الصيدلية موجود بالفعل بالدليل!", "error");
-                        return;
+                    showToast(`تمت إضافة تاريخ (${dateVal}) بنجاح.`);
+                    addScheduleForm.reset();
+                };
+            }
+
+            // إضافة أو تعديل صيدلية بالدليل Master
+            const masterForm = document.getElementById('add-master-pharmacy-form');
+            if (masterForm) {
+                masterForm.onsubmit = (e) => {
+                    e.preventDefault();
+                    const name = document.getElementById('dir-name-input').value.trim();
+                    const region = document.getElementById('dir-region-input').value;
+                    const address = document.getElementById('dir-address-input').value.trim();
+                    const mapUrl = document.getElementById('dir-map-input').value.trim();
+
+                    if (!name || !address) return;
+
+                    if (editingMasterIndex !== null) {
+                        masterPharmacies[editingMasterIndex] = { name, region, address, mapUrl };
+                        showToast(`تم تحديث صيدلية (${name}) بنجاح`);
+                        cancelEditingMasterPharmacy();
+                    } else {
+                        if (masterPharmacies.some(p => p.name === name)) {
+                            showToast("اسم الصيدلية موجود مسبقاً بالدليل!", "error");
+                            return;
+                        }
+                        masterPharmacies.push({ name, region, address, mapUrl });
+                        showToast(`تمت إضافة صيدلية (${name}) للدليل العام`);
+                        masterForm.reset();
                     }
 
-                    masterPharmacies.push({ name, region, address, mapUrl });
                     saveMasterPharmaciesState();
-                    document.getElementById('add-master-pharmacy-form').reset();
-                    showToast(`تمت إضافة (${name}) إلى الدليل العام`);
-                }
-            };
+                };
+            }
 
             document.getElementById('cancel-edit-dir-btn').onclick = cancelEditingMasterPharmacy;
 
-            // Change Visible Days Count Select
-            document.getElementById('visible-days-count-select').onchange = (e) => {
-                visibleDaysLimit = parseInt(e.target.value);
-                saveSettingsState();
-                initDateSelector();
-                renderPharmacies();
-                showToast("تم تحديث عدد الأيام المعروضة");
-            };
-
-            // Change Admin Password Form
+            // تغيير كلمة السر
             document.getElementById('change-pass-form').onsubmit = (e) => {
                 e.preventDefault();
                 const newPass = document.getElementById('new-password-input').value;
@@ -1798,8 +1831,8 @@
 
                 adminPassword = newPass;
                 saveSettingsState();
-                document.getElementById('change-pass-form').reset();
                 showToast("تم تغيير كلمة السر بنجاح");
+                document.getElementById('change-pass-form').reset();
             };
 
             document.getElementById('toggle-new-pass-btn').onclick = () => {
@@ -1814,93 +1847,32 @@
                 }
             };
 
-            // Reset Analytics
+            // تصفير الإحصائيات
             document.getElementById('reset-analytics-btn').onclick = () => {
                 showConfirmModal(
                     "تصفير الإحصائيات",
-                    "هل أنت متأكد من إعادة ضبط وتصفير جميع أعداد الإحصائيات إلى الصفر؟",
+                    "هل أنت متأكد من إعادة ضبط كافة أرقام الإحصائيات إلى الصفر؟",
                     () => {
                         analyticsData = { pageViews: 0, imageExports: 0, whatsappShares: 0, mapClicks: 0 };
                         set(analyticsRef, analyticsData);
-                        updateAnalyticsUI();
-                        showToast("تم تصفير جميع الإحصائيات.");
+                        showToast("تم تصفير الإحصائيات بنجاح");
                     }
                 );
             };
 
-            // Reset Defaults
+            // استعادة البيانات الافتراضية
             document.getElementById('reset-defaults-btn').onclick = () => {
                 showConfirmModal(
                     "استعادة البيانات الافتراضية",
-                    "هل أنت متأكد من استعادة الجدول والبيانات الافتراضية الأولى؟",
+                    "سيتم مسح البيانات الحالية وإعادة تعيين جدول الصيدليات والدليل الافتراضي. هل تريد الاستمرار؟",
                     () => {
                         scheduleData = defaultScheduleData;
                         masterPharmacies = defaultMasterPharmacies;
                         saveScheduleState();
                         saveMasterPharmaciesState();
-                        showToast("تمت استعادة البيانات الافتراضية بنجاح.");
+                        showToast("تمت استعادة البيانات الافتراضية");
                     }
                 );
-            };
-
-            // Facebook Export Modal Buttons
-            document.getElementById('open-fb-modal-btn').onclick = () => {
-                incrementAnalytic('imageExports');
-                openFacebookModal();
-            };
-
-            document.getElementById('close-fb-modal-btn').onclick = () => {
-                document.getElementById('facebook-modal').classList.add('hidden');
-            };
-
-            document.getElementById('cancel-fb-modal-btn').onclick = () => {
-                document.getElementById('facebook-modal').classList.add('hidden');
-            };
-
-            document.getElementById('theme-btn-dark').onclick = () => updateCardTheme('dark');
-            document.getElementById('theme-btn-emerald').onclick = () => updateCardTheme('emerald');
-
-            document.getElementById('download-img-btn').onclick = () => {
-                const card = document.getElementById('facebook-export-card');
-                const downloadBtn = document.getElementById('download-img-btn');
-
-                downloadBtn.disabled = true;
-                downloadBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> جاري تجهيز الصورة...`;
-
-                const origTransform = card.style.transform;
-                card.style.transform = 'none';
-
-                html2canvas(card, {
-                    scale: 2,
-                    useCORS: true,
-                    allowTaint: true,
-                    backgroundColor: null,
-                    width: 1080,
-                    height: 1080
-                }).then(canvas => {
-                    card.style.transform = origTransform;
-                    downloadBtn.disabled = false;
-                    downloadBtn.innerHTML = `<i class="fa-solid fa-download text-base"></i> <span>تحميل الصورة عالية الدقة (PNG)</span>`;
-
-                    const link = document.createElement('a');
-                    link.download = `مناوبات_الصيدليات_${selectedDate}.png`;
-                    link.href = canvas.toDataURL('image/png', 1.0);
-                    link.click();
-                    showToast("تم تحميل صورة منشور الفيسبوك بنجاح!");
-                }).catch(err => {
-                    card.style.transform = origTransform;
-                    downloadBtn.disabled = false;
-                    downloadBtn.innerHTML = `<i class="fa-solid fa-download text-base"></i> <span>تحميل الصورة عالية الدقة (PNG)</span>`;
-                    showToast("حدث خطأ أثناء تصدير الصورة", "error");
-                });
-            };
-
-            // WhatsApp Web Share Button
-            document.getElementById('share-website-whatsapp-btn').onclick = () => {
-                incrementAnalytic('whatsappShares');
-                const text = `💊 *موقع دليل الصيدليات المناوبة الرسمي*\n(رأس الشغري - الرادار - وادي الشاطر)\n\nتابع أحدث جدول ومواقع الصيدليات المناوبة مباشرة من خلال الرابط التالي:\nhttps://duty-pharmacies-directory-963.github.io/-----/`;
-                const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
-                window.open(url, '_blank');
             };
         });
     </script>
