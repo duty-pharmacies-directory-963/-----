@@ -125,16 +125,23 @@
             
             <!-- Quick Tools & Metrics -->
             <div class="flex flex-wrap items-center gap-2.5">
+                <!-- Copy Link Button -->
+                <button id="copy-website-link-btn" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black shadow-lg hover:shadow-xl transition-all flex items-center gap-2 border border-emerald-400 focus:ring-2 focus:ring-emerald-300">
+                    <i class="fa-solid fa-copy text-base"></i>
+                    <span class="hidden md:inline">نسخ الرابط</span>
+                    <span class="md:hidden">نسخ</span>
+                </button>
+
                 <button id="share-website-whatsapp-btn" class="bg-emerald-500 hover:bg-emerald-600 text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black shadow-lg hover:shadow-xl transition-all flex items-center gap-2 border border-emerald-400 focus:ring-2 focus:ring-emerald-300">
                     <i class="fa-brands fa-whatsapp text-lg"></i>
                     <span class="hidden md:inline">مشاركة الموقع عبر الواتساب</span>
-                    <span class="md:hidden">مشاركة الموقع</span>
+                    <span class="md:hidden">مشاركة</span>
                 </button>
 
                 <button id="open-fb-modal-btn" class="bg-white hover:bg-slate-100 text-slate-900 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black shadow-lg hover:shadow-xl transition-all flex items-center gap-2 border border-slate-200">
                     <i class="fa-brands fa-facebook-f text-blue-600 text-base"></i>
                     <span class="hidden md:inline">استخرج صورة للنشر</span>
-                    <span class="md:hidden">صورة الفيس بوك</span>
+                    <span class="md:hidden">صورة الفيسبوك</span>
                 </button>
 
                 <button id="toggle-dark-btn" title="تبديل المظهر" class="bg-white/10 hover:bg-white/20 p-2 rounded-xl backdrop-blur-md border border-white/20 transition-all text-emerald-100 hover:text-white">
@@ -1097,7 +1104,7 @@
                                 </a>
                             ` : `
                                 <button disabled class="bg-emerald-100/60 dark:bg-emerald-900/20 text-emerald-400 dark:text-emerald-600 text-xs font-bold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1 cursor-not-allowed">
-                                    <i class="fa-solid fa-clock"></i> سيتم إضافة الخريطة قريباً
+                                    <i class="fa-solid fa-clock"></i> لا تتوفر خريطة
                                 </button>
                             `}
 
@@ -1183,7 +1190,6 @@
                                         </div>
 
                                         <div class="flex items-center gap-2">
-                                            <!-- تحديد المناوبة صباحية ولا مسائية -->
                                             <select data-pharm-shift-date="${day.date}" data-pharm-name="${p.name}" class="pharm-shift-select bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-[11px] font-bold rounded-lg px-2 py-1 text-slate-700 dark:text-slate-200 focus:outline-none">
                                                 <option value="" ${!p.shiftPeriod ? 'selected' : ''}>-- الفترة (حسب اليوم) --</option>
                                                 <option value="من الساعة 8:00 صباحاً لغاية الساعة 4:00 عصراً" ${p.shiftPeriod === 'من الساعة 8:00 صباحاً لغاية الساعة 4:00 عصراً' ? 'selected' : ''}>صباحية (8 ص - 4 ع)</option>
@@ -1200,7 +1206,7 @@
                         </div>
 
                         <div class="space-y-2 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
-                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300">بحث وااختيار صيدلية لإضافتها لهذا اليوم مع تحديد الفترة:</label>
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300">بحث واختيار صيدلية لإضافتها لهذا اليوم:</label>
                             <div class="flex flex-col sm:flex-row items-center gap-2">
                                 <div class="relative w-full">
                                     <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400 text-xs">
@@ -1579,6 +1585,42 @@
                 }
             };
 
+            // Copy Link Button Action
+            const copyWebsiteBtn = document.getElementById('copy-website-link-btn');
+            if (copyWebsiteBtn) {
+                copyWebsiteBtn.onclick = async () => {
+                    const targetUrl = 'https://duty-pharmacies-directory-963.github.io/-----/';
+                    try {
+                        if (navigator.clipboard && navigator.clipboard.writeText) {
+                            await navigator.clipboard.writeText(targetUrl);
+                        } else {
+                            const tempInput = document.createElement('textarea');
+                            tempInput.value = targetUrl;
+                            tempInput.style.position = 'fixed';
+                            tempInput.style.opacity = '0';
+                            document.body.appendChild(tempInput);
+                            tempInput.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(tempInput);
+                        }
+                        showToast('تم نسخ الرابط بنجاح!');
+                    } catch (err) {
+                        showToast('تعذر نسخ الرابط، حاول يدوياً', 'error');
+                    }
+                };
+            }
+
+            // Share Website Link on WhatsApp
+            const shareWaWebsiteBtn = document.getElementById('share-website-whatsapp-btn');
+            if (shareWaWebsiteBtn) {
+                shareWaWebsiteBtn.onclick = () => {
+                    incrementAnalytic('whatsappShares');
+                    const text = `💊 *دليل الصيدليات المناوبة* (رأس الشغري - الرادار - وادي الشاطر)\n\nيمكنك متابعة جدول المناوبات اليومية من خلال الرابط التالي:\nhttps://duty-pharmacies-directory-963.github.io/-----/`;
+                    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+                    window.open(url, '_blank');
+                };
+            }
+
             // Admin Login Modal Trigger
             document.getElementById('admin-menu-btn').onclick = () => {
                 if (isAdminLoggedIn) {
@@ -1695,6 +1737,7 @@
                     });
 
                     saveScheduleState();
+                    saveMasterPharmaciesState();
                     cancelEditingMasterPharmacy();
                     showToast(`تم تعديل بيانات صيدلية (${name}) بنجاح`);
                 } else {
@@ -1704,120 +1747,66 @@
                     }
 
                     masterPharmacies.push({ name, region, address, mapUrl });
+                    saveMasterPharmaciesState();
                     document.getElementById('add-master-pharmacy-form').reset();
-                    showToast(`تمت إضافة (${name}) إلى الدليل بنجاح`);
+                    showToast(`تمت إضافة (${name}) إلى الدليل العام بنجاح`);
                 }
-
-                saveMasterPharmaciesState();
-                renderAdminDirectoryTab();
-                renderAdminScheduleTab();
-                renderPharmacies();
             };
 
             document.getElementById('cancel-edit-dir-btn').onclick = cancelEditingMasterPharmacy;
 
-            // Add Schedule Date Form
+            // Add new Date to Schedule Form
             document.getElementById('add-schedule-date-form').onsubmit = (e) => {
                 e.preventDefault();
-                const newDate = document.getElementById('new-date-input').value;
+                const date = document.getElementById('new-date-input').value;
                 const dayName = document.getElementById('new-dayname-input').value.trim();
 
-                if (!newDate || !dayName) return;
+                if (!date || !dayName) return;
 
-                if (scheduleData.some(d => d.date === newDate)) {
-                    showToast("هذا التاريخ مضاف بالفعل في جدول المناوبات!", "error");
+                if (scheduleData.some(d => d.date === date)) {
+                    showToast("هذا التاريخ مضاف بالفعل في الجدول!", "error");
                     return;
                 }
 
                 scheduleData.unshift({
-                    date: newDate,
+                    date: date,
                     dayName: dayName,
                     shiftTime: "من الساعة 8:00 مساءً لغاية الساعة 12:00 ليلاً",
                     pharmacies: []
                 });
 
+                // Sort by date descending
                 scheduleData.sort((a, b) => new Date(b.date) - new Date(a.date));
 
                 saveScheduleState();
-                initDateSelector();
-                renderAdminScheduleTab();
-                renderPharmacies();
-
                 document.getElementById('add-schedule-date-form').reset();
-                showToast(`تم إضافة يوم (${dayName} - ${newDate}) بنجاح`);
+                showToast(`تمت إضافة تاريخ (${date}) إلى الجدول بنجاح`);
             };
 
-            // Visible Days Select Limit Change
+            // Visible Days Limit Change
             document.getElementById('visible-days-count-select').onchange = (e) => {
                 visibleDaysLimit = parseInt(e.target.value);
                 saveSettingsState();
                 initDateSelector();
                 renderPharmacies();
-                showToast(`تم تحديث عدد الأيام المعروضة إلى (${visibleDaysLimit}) أيام`);
+                showToast("تم تحديث عدد الأيام المعروضة للزوار");
             };
 
-            // Facebook Modal Buttons
-            document.getElementById('open-fb-modal-btn').onclick = () => {
-                incrementAnalytic('imageExports');
-                openFacebookModal();
+            // Reset Analytics
+            document.getElementById('reset-analytics-btn').onclick = () => {
+                showConfirmModal(
+                    "تصفير الإحصائيات",
+                    "هل أنت متأكد من تصفير جميع عدادات الزيارات والمشاركات والإحصائيات؟",
+                    () => {
+                        analyticsData = { pageViews: 0, imageExports: 0, whatsappShares: 0, mapClicks: 0 };
+                        set(analyticsRef, analyticsData);
+                        updateAnalyticsUI();
+                        showToast("تم تصفير الإحصائيات بنجاح");
+                    }
+                );
             };
 
-            document.getElementById('close-fb-modal-btn').onclick = () => {
-                document.getElementById('facebook-modal').classList.add('hidden');
-            };
-
-            document.getElementById('cancel-fb-modal-btn').onclick = () => {
-                document.getElementById('facebook-modal').classList.add('hidden');
-            };
-
-            document.getElementById('theme-btn-dark').onclick = () => updateCardTheme('dark');
-            document.getElementById('theme-btn-emerald').onclick = () => updateCardTheme('emerald');
-
-            document.getElementById('download-img-btn').onclick = () => {
-                const card = document.getElementById('facebook-export-card');
-                const downloadBtn = document.getElementById('download-img-btn');
-
-                downloadBtn.disabled = true;
-                downloadBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> جاري تجهيز الصورة...`;
-
-                const originalTransform = card.style.transform;
-                card.style.transform = 'none';
-
-                html2canvas(card, {
-                    scale: 2,
-                    useCORS: true,
-                    allowTaint: true,
-                    backgroundColor: null,
-                    width: 1080,
-                    height: 1080
-                }).then(canvas => {
-                    card.style.transform = originalTransform;
-
-                    const link = document.createElement('a');
-                    link.download = `الصيدليات_المناوبة_${selectedDate}.png`;
-                    link.href = canvas.toDataURL('image/png', 1.0);
-                    link.click();
-
-                    downloadBtn.disabled = false;
-                    downloadBtn.innerHTML = `<i class="fa-solid fa-download text-base"></i> <span>تحميل الصورة عالية الدقة (PNG)</span>`;
-                    showToast("تم تحميل صورة الفيسبوك بنجاح!");
-                }).catch(err => {
-                    card.style.transform = originalTransform;
-                    downloadBtn.disabled = false;
-                    downloadBtn.innerHTML = `<i class="fa-solid fa-download text-base"></i> <span>تحميل الصورة عالية الدقة (PNG)</span>`;
-                    showToast("حدث خطأ أثناء استخراج الصورة", "error");
-                });
-            };
-
-            // Share Website URL via WhatsApp
-            document.getElementById('share-website-whatsapp-btn').onclick = () => {
-                incrementAnalytic('whatsappShares');
-                const text = `يمكنكم الآن متابعة جدول الصيدليات المناوبة الرسمية (رأس الشغري - الرادار - وادي الشاطر) يومياً وعبر الخريطة المباشرة من خلال الرابط التالي:\nhttps://duty-pharmacies-directory-963.github.io/-----/`;
-                const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
-                window.open(url, '_blank');
-            };
-
-            // Settings Forms
+            // Change Admin Password Form
             document.getElementById('change-pass-form').onsubmit = (e) => {
                 e.preventDefault();
                 const newPass = document.getElementById('new-password-input').value;
@@ -1831,7 +1820,7 @@
                 adminPassword = newPass;
                 saveSettingsState();
                 document.getElementById('change-pass-form').reset();
-                showToast("تم تحديث كلمة السر بنجاح!");
+                showToast("تم تغيير كلمة سر المسؤول بنجاح");
             };
 
             document.getElementById('toggle-new-pass-btn').onclick = () => {
@@ -1846,37 +1835,58 @@
                 }
             };
 
+            // Reset Default Data
             document.getElementById('reset-defaults-btn').onclick = () => {
                 showConfirmModal(
                     "استعادة البيانات الافتراضية",
-                    "هل أنت متأكد من استعادة الجدول والبيانات الافتراضية؟ سيتم استبدال البيانات الحالية.",
+                    "هل أنت متأكد من استعادة بيانات المناوبة والدليل إلى الوضع الافتراضي؟",
                     () => {
                         scheduleData = defaultScheduleData;
                         masterPharmacies = defaultMasterPharmacies;
                         saveScheduleState();
                         saveMasterPharmaciesState();
-                        initDateSelector();
-                        renderPharmacies();
-                        renderAdminScheduleTab();
-                        renderAdminDirectoryTab();
-                        showToast("تمت استعادة البيانات الافتراضية بنجاح.");
+                        showToast("تمت استعادة البيانات الافتراضية بنجاح");
                     }
                 );
             };
 
-            document.getElementById('reset-analytics-btn').onclick = () => {
-                showConfirmModal(
-                    "تصفير الإحصائيات",
-                    "هل أنت متأكد من تصفير عدادات الزيارات والمشاركات بالكامل؟",
-                    () => {
-                        analyticsData = { pageViews: 0, imageExports: 0, whatsappShares: 0, mapClicks: 0 };
-                        set(analyticsRef, analyticsData);
-                        updateAnalyticsUI();
-                        showToast("تم تصفير الإحصائيات بنجاح.");
-                    }
-                );
+            // Facebook Modal Triggers
+            document.getElementById('open-fb-modal-btn').onclick = openFacebookModal;
+            document.getElementById('close-fb-modal-btn').onclick = () => document.getElementById('facebook-modal').classList.add('hidden');
+            document.getElementById('cancel-fb-modal-btn').onclick = () => document.getElementById('facebook-modal').classList.add('hidden');
+
+            document.getElementById('theme-btn-dark').onclick = () => updateCardTheme('dark');
+            document.getElementById('theme-btn-emerald').onclick = () => updateCardTheme('emerald');
+
+            // Download Image using html2canvas
+            document.getElementById('download-img-btn').onclick = () => {
+                incrementAnalytic('imageExports');
+                const card = document.getElementById('facebook-export-card');
+                const originalTransform = card.style.transform;
+                card.style.transform = 'none';
+
+                showToast("جاري إعداد وتحميل الصورة...", "success");
+
+                html2canvas(card, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: null
+                }).then(canvas => {
+                    card.style.transform = originalTransform;
+                    const link = document.createElement('a');
+                    link.download = `جدول_مناوبة_الصيدليات_${selectedDate}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    showToast("تم تحضير الصورة وتحميلها بنجاح!");
+                }).catch(err => {
+                    card.style.transform = originalTransform;
+                    showToast("حدث خطأ أثناء إنشاء الصورة!", "error");
+                });
             };
         });
     </script>
 </body>
 </html>
+
+```
