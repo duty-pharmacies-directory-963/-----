@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دليل الصيدليات المناوبة - لوحة تحكم لإدارة الجدول والتحليلات</title>
+    <title>دليل الصيدليات المناوبة في وادي الشاطر - رأس الشغري - الرادار</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -1150,6 +1150,7 @@
                     const address = btn.getAttribute('data-share-address');
                     const time = btn.getAttribute('data-share-time');
                     const text = `💊 *${name}* (${region})\n📍 *العنوان:* ${address}\n⏰ *توقيت المناوبة:* ${time}\n🗓️ *التاريخ:* ${selectedDate}\n\nتابع جدول الصيدليات المناوبة عبر الرابط التالي:\nhttps://duty-pharmacies-directory-963.github.io/-----/`;
+                    
                     const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
                     window.open(url, '_blank');
                 };
@@ -1585,7 +1586,8 @@
             if (shareWhatsappSiteBtn) {
                 shareWhatsappSiteBtn.onclick = () => {
                     incrementAnalytic('whatsappShares');
-                    const text = `💊 *دليل الصيدليات المناوبة* (رأس الشغري - الرادار - وادي الشاطر)\nيمكنك متابعة جدول المناوبة اليومي والتفاصيل من هنا:\n${window.location.href}`;
+                    const text =`💊 *دليل الصيدليات المناوبة* (رأس الشغري - الرادار - وادي الشاطر) 
+يمكنك متابعة جدول المناوبة اليومي والتفاصيل من هنا:\nhttps://duty-pharmacies-directory-963.github.io/-----/`;;
                     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
                 };
             }
